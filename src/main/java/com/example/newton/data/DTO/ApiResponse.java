@@ -1,10 +1,8 @@
-package com.example.newton.data;
+package com.example.newton.data.DTO;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 
-public class ApiResponse<T> {
+public class ApiResponse {
 
     private HttpStatus status;
     private String debugMessage;

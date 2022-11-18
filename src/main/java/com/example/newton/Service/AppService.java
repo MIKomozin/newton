@@ -1,5 +1,6 @@
 package com.example.newton.Service;
 
+import com.example.newton.data.DTO.ListProductWthSumKcal;
 import com.example.newton.data.Entity.ListProduct;
 import com.example.newton.data.Entity.Product;
 import com.example.newton.Repository.ListProductRepository;
@@ -73,5 +74,19 @@ public class AppService implements SaveService, GetService {
             return listProduct;
         }
         return null;
+    }
+
+    @Override
+    public ListProductWthSumKcal getListProductAndSumKcalById(int id) {
+        ListProductWthSumKcal listProductWthSumKcal = new ListProductWthSumKcal();
+        ListProduct listProduct = listProductRepository.findListProductById(id);
+        //используя stream API подсчитаем суммарный каллораж
+        int sumKcal = listProduct.getList2product().stream()
+                .mapToInt(Product::getKcal)
+                .sum();
+
+        listProductWthSumKcal.setListProduct(listProduct);
+        listProductWthSumKcal.setSumKcal(sumKcal);
+        return listProductWthSumKcal;
     }
 }

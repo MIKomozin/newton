@@ -1,25 +1,32 @@
 package com.example.newton.data.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "products")
+@ApiModel(description = "Объект Product")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty("ID объкта Product. Генерируется автоматически")
     private Integer id;
 
     @Column(columnDefinition = "VARCHAR(128) NOT NULL")
+    @ApiModelProperty("Название продукта")
     private String name;
 
     @Column(columnDefinition = "TEXT")
+    @ApiModelProperty("Описание продукта")
     private String description;
 
     @Column(columnDefinition = "INT NOT NULL")
+    @ApiModelProperty("Килокаллории продукта")
     private Integer kcal;
 
     //из условия задачи непонятно можно ли добавлять продукт в несколько списков (сделаем что можно)

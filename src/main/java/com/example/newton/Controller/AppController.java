@@ -1,12 +1,11 @@
 package com.example.newton.Controller;
 
-import com.example.newton.data.DTO.ListProductDTO;
-import com.example.newton.data.DTO.ProductDTO;
-import com.example.newton.data.DTO.ProductToListDTO;
+import com.example.newton.data.DTO.*;
 import com.example.newton.data.Entity.ListProduct;
 import com.example.newton.data.Entity.Product;
 import com.example.newton.Service.AppService;
-import com.example.newton.data.ApiResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
+@Api("APP API")
 public class AppController {
 
     private final AppService appService;
@@ -29,19 +29,30 @@ public class AppController {
     }
 
     @GetMapping("/get/products")
+    @ApiOperation("GET запрос для получения списка всех имеющихся продуктов")
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(appService.getAllProducts());
     }
 
-    @GetMapping("/get/listProduct")
+    @GetMapping("/get/list")
+    @ApiOperation("GET запрос для получения определенного списка по id с содержащимися в нем продуктами")
     public ResponseEntity<ListProduct> getListProductById(@RequestParam("id") int id) {
         return ResponseEntity.ok(appService.getListProductById(id));
     }
 
+    //отдельный метод для усложненного задания
+    @GetMapping("/get/listWithKcal")
+    @ApiOperation("GET запрос для получения определенного списка по id с содержащимися в нем продуктами и суммой" +
+            "килокаллорий данных продуктов в списке")
+    public ResponseEntity<ListProductWthSumKcal> getListWithKCalSumById(@RequestParam("id") int id) {
+        return ResponseEntity.ok(appService.getListProductAndSumKcalById(id));
+    }
+
     @PostMapping(value = "/post/addProduct")
-    public ResponseEntity<ApiResponse<Product>> addProduct(@RequestBody ProductDTO productDTO) {
+    @ApiOperation("POST запрос добавления продукта в БД")
+    public ResponseEntity<ApiResponse> addProduct(@RequestBody ProductDTO productDTO) {
         Product product = appService.addProduct(productDTO.getName(), productDTO.getDescription(), productDTO.getKcal());
-        ApiResponse<Product> response = new ApiResponse<>();
+        ApiResponse response = new ApiResponse();
         if (product != null) {
             response.setDebugMessage("Продукт добавлен в БД");
             response.setStatus(HttpStatus.OK);
@@ -53,9 +64,10 @@ public class AppController {
     }
 
     @PostMapping("/post/addListProduct")
-    public ResponseEntity<ApiResponse<ListProduct>> addList(@RequestBody ListProductDTO listProductDTO) {
+    @ApiOperation("POST запрос добавления списка (без продуктов) в БД")
+    public ResponseEntity<ApiResponse> addList(@RequestBody ListProductDTO listProductDTO) {
         ListProduct listProduct = appService.addList(listProductDTO.getName());
-        ApiResponse<ListProduct> response = new ApiResponse<>();
+        ApiResponse response = new ApiResponse();
         if (listProduct != null) {
             response.setDebugMessage("Список добавлен в БД");
             response.setStatus(HttpStatus.OK);
@@ -67,9 +79,10 @@ public class AppController {
     }
 
     @PostMapping("/post/addProductToList")
-    public ResponseEntity<ApiResponse<ListProduct>> addProductToList(@RequestBody ProductToListDTO productToListDTO) {
+    @ApiOperation("POST запрос добавления определенного продукта (по названию) в существующий список (по наименованию)")
+    public ResponseEntity<ApiResponse> addProductToList(@RequestBody ProductToListDTO productToListDTO) {
         ListProduct listProduct = appService.addProductToList(productToListDTO.getProductName(), productToListDTO.getListName());
-        ApiResponse<ListProduct> response = new ApiResponse<>();
+        ApiResponse response = new ApiResponse();
         if (listProduct != null) {
             response.setDebugMessage("Продукт добавлен в существующий список");
             response.setStatus(HttpStatus.OK);
